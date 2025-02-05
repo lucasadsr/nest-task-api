@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { TaskDto } from './task.dto';
+import { FindAllParameters, TaskDto } from './task.dto';
 
 @Injectable()
 export class TaskService {
@@ -18,6 +18,22 @@ export class TaskService {
     }
 
     return task;
+  }
+
+  findAll(params: FindAllParameters): TaskDto[] {
+    return this.tasks.filter((task) => {
+      let match = true;
+
+      if (params.title && task.title.includes(params.title)) {
+        match = false;
+      }
+
+      if (params.status && task.status.includes(params.status)) {
+        match = false;
+      }
+
+      return match;
+    });
   }
 
   update(task: TaskDto): TaskDto {
