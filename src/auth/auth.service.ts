@@ -18,8 +18,8 @@ export class AuthService {
     );
   }
 
-  signIn(username: string, password: string): AuthResponse {
-    const foundUser = this.usersService.findByUsername(username);
+  async signIn(username: string, password: string): Promise<AuthResponse> {
+    const foundUser = await this.usersService.findByUsername(username);
 
     if (!foundUser || !compareSync(password, foundUser.password)) {
       throw new UnauthorizedException();
