@@ -1,12 +1,31 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { FindAllParameters, TaskDto } from './task.dto';
+import { FindAllParameters, TaskDto, TaskStatusEnum } from './task.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { TaskEntity } from 'src/db/entities/task-entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class TaskService {
+  constructor(
+    @InjectRepository(TaskEntity)
+    private readonly taskRespository: Repository<TaskEntity>,
+  ) {}
+
   private tasks: TaskDto[] = [];
 
-  create(task: TaskDto) {
-    this.tasks.push(task);
+  async create(task: TaskDto) {
+    const { title, description, expirationDate } = task;
+
+    const taskToSave: TaskEntity = {
+      title,
+      description,
+      status: TaskStatusEnum.TO_DO,
+      expirationDate,
+    };
+
+    const createdTask = await this.taskRespository.save(taskToSave);
+
+    return this.mapEntityToDto(createdTask);
   }
 
   findById(id: string): TaskDto {
@@ -54,5 +73,15 @@ export class TaskService {
     }
 
     this.tasks.splice(taskIndex, 1);
+  }
+
+  private mapEntityToDto(TaskEntity: TaskEntity): TaskDto {
+    return {
+      id: TaskEntity.id,
+      title: TaskEntity.title,
+      description: TaskEntity.description,
+      expirationDate: TaskEntity.expirationDate,
+      status: TaskStatusEnum[TaskEntity.status],
+    };
   }
 }
