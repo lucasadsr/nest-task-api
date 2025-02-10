@@ -77,14 +77,12 @@ export class TaskService {
     await this.taskRespository.update(id, this.mapDtoToEntity(task));
   }
 
-  remove(id: string) {
-    const taskIndex = this.tasks.findIndex((task) => task.id === id);
+  async remove(id: string) {
+    const result = await this.taskRespository.delete(id);
 
-    if (taskIndex < 0) {
+    if (!result.affected) {
       throw new NotFoundException(`Task with id ${id} not found.`);
     }
-
-    this.tasks.splice(taskIndex, 1);
   }
 
   private mapEntityToDto(TaskEntity: TaskEntity): TaskDto {

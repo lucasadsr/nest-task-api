@@ -25,12 +25,12 @@ export class TaskController {
 
   @Get('/:id')
   async findById(@Param('id') id: string): Promise<TaskDto> {
-    return this.taskService.findById(id);
+    return await this.taskService.findById(id);
   }
 
   @Get()
   async findAll(@Query() params: FindAllParameters): Promise<TaskDto[]> {
-    return this.taskService.findAll(params);
+    return await this.taskService.findAll(params);
   }
 
   @Put('/:id')
@@ -39,7 +39,7 @@ export class TaskController {
   }
 
   @Delete('/:id')
-  remove(@Param('id') id: string) {
-    return this.taskService.remove(id);
+  async remove(@Param('id') id: string) {
+    return await this.taskService.remove(id);
   }
 }
