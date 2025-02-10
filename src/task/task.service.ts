@@ -28,14 +28,18 @@ export class TaskService {
     return this.mapEntityToDto(createdTask);
   }
 
-  findById(id: string): TaskDto {
-    const task = this.tasks.find((task) => task.id === id);
+  async findById(id: string): Promise<TaskDto> {
+    const task = await this.taskRespository.findOne({
+      where: {
+        id,
+      },
+    });
 
     if (!task) {
       throw new NotFoundException(`Task with id ${id} not found.`);
     }
 
-    return task;
+    return this.mapEntityToDto(task);
   }
 
   findAll(params: FindAllParameters): TaskDto[] {
