@@ -63,15 +63,18 @@ export class TaskService {
     return tasksFound.map((task) => this.mapEntityToDto(task));
   }
 
-  update(task: TaskDto): TaskDto {
-    const taskIndex = this.tasks.findIndex((t) => t.id === task.id);
+  async update(id: string, task: TaskDto) {
+    const foundTask = await this.taskRespository.findOne({
+      where: {
+        id,
+      },
+    });
 
-    if (taskIndex < 0) {
+    if (!foundTask) {
       throw new NotFoundException(`Task with id ${task.id} not found.`);
     }
 
-    this.tasks[taskIndex] = task;
-    return task;
+    await this.taskRespository.update(id, this.mapDtoToEntity(task));
   }
 
   remove(id: string) {
@@ -91,6 +94,15 @@ export class TaskService {
       description: TaskEntity.description,
       expirationDate: TaskEntity.expirationDate,
       status: TaskStatusEnum[TaskEntity.status],
+    };
+  }
+
+  private mapDtoToEntity(taskDto: TaskDto): Partial<TaskEntity> {
+    return {
+      title: taskDto.title,
+      description: taskDto.description,
+      expirationDate: taskDto.expirationDate,
+      status: TaskStatusEnum[taskDto.status],
     };
   }
 }

@@ -9,7 +9,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { FindAllParameters, TaskDto } from './task.dto';
+import { FindAllParameters, TaskDto, TaskRouteParameters } from './task.dto';
 import { TaskService } from './task.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 
@@ -33,9 +33,9 @@ export class TaskController {
     return this.taskService.findAll(params);
   }
 
-  @Put()
-  update(@Body() task: TaskDto) {
-    this.taskService.update(task);
+  @Put('/:id')
+  async update(@Param() params: TaskRouteParameters, @Body() task: TaskDto) {
+    await this.taskService.update(params.id, task);
   }
 
   @Delete('/:id')
