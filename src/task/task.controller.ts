@@ -29,7 +29,7 @@ export class TaskController {
   }
 
   @Get()
-  findAll(@Query() params: FindAllParameters): TaskDto[] {
+  async findAll(@Query() params: FindAllParameters): Promise<TaskDto[]> {
     return this.taskService.findAll(params);
   }
 

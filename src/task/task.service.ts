@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { FindAllParameters, TaskDto, TaskStatusEnum } from './task.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TaskEntity } from 'src/db/entities/task-entity';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Like, Repository } from 'typeorm';
 
 @Injectable()
 export class TaskService {
@@ -42,20 +42,25 @@ export class TaskService {
     return this.mapEntityToDto(task);
   }
 
-  findAll(params: FindAllParameters): TaskDto[] {
-    return this.tasks.filter((task) => {
-      let match = true;
+  async findAll(params: FindAllParameters): Promise<TaskDto[]> {
+    const searchParams: FindOptionsWhere<TaskEntity> = {};
 
-      if (params.title && task.title.includes(params.title)) {
-        match = false;
-      }
+    if (params.title) {
+      searchParams.title = Like(`%${params.title}%`);
+    }
 
-      if (params.status && task.status.includes(params.status)) {
-        match = false;
-      }
+    if (params.status) {
+      searchParams.status = Like(params.status as TaskStatusEnum);
+    }
 
-      return match;
+    const tasksFound = await this.taskRespository.find({
+      where: {
+        title: searchParams.title,
+        status: searchParams.status,
+      },
     });
+
+    return tasksFound.map((task) => this.mapEntityToDto(task));
   }
 
   update(task: TaskDto): TaskDto {
