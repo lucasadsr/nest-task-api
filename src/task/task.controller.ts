@@ -12,6 +12,7 @@ import {
 import { FindAllParameters, TaskDto, TaskRouteParameters } from './task.dto';
 import { TaskService } from './task.service';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @UseGuards(AuthGuard)
 @Controller('task')
@@ -19,6 +20,13 @@ export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
   @Post()
+  @ApiOperation({ summary: 'Cria uma task' })
+  @ApiBody({ type: TaskDto })
+  @ApiResponse({
+    status: 201,
+    description: 'task criada com sucesso.',
+    type: TaskDto,
+  })
   async create(@Body() task: TaskDto) {
     return await this.taskService.create(task);
   }
