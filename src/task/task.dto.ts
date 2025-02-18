@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsDateString,
   IsEnum,
@@ -21,27 +22,47 @@ export class TaskDto {
   @IsString()
   @MinLength(3)
   @MaxLength(256)
+  @ApiProperty({
+    example: 'Estudar NestJS',
+  })
   title: string;
 
   @IsString()
   @MinLength(5)
   @MaxLength(512)
+  @ApiProperty({ example: 'Aprender a criar um CRUD com NestJS' })
   description: string;
 
   @IsEnum(TaskStatusEnum)
   @IsOptional()
+  @ApiProperty({ example: 'TO_DO' })
   status: TaskStatusEnum;
 
   @IsDateString()
+  @ApiProperty({ example: '2025-02-11' })
   expirationDate: Date;
 }
 
-export interface FindAllParameters {
+export class FindAllParameters {
+  @IsOptional()
+  @IsString()
+  @ApiProperty({
+    example: 'Estudar NestJS',
+    required: false,
+  })
   title: string;
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty({
+    example: 'TO_DO',
+    required: false,
+  })
   status: string;
 }
 
 export class TaskRouteParameters {
   @IsUUID()
+  @ApiProperty()
   id: string;
 }

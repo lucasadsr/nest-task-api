@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
-import { AuthResponse } from './auth.dto';
+import { AuthResponse, SignInDto } from './auth.dto';
 import { compareSync } from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 
@@ -18,7 +18,7 @@ export class AuthService {
     );
   }
 
-  async signIn(username: string, password: string): Promise<AuthResponse> {
+  async signIn({ password, username }: SignInDto): Promise<AuthResponse> {
     const foundUser = await this.usersService.findByUsername(username);
 
     if (!foundUser || !compareSync(password, foundUser.password)) {
