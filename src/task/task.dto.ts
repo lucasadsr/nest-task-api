@@ -43,12 +43,26 @@ export class TaskDto {
   expirationDate: Date;
 }
 
-export interface FindAllParameters {
+export class FindAllParameters {
+  @IsOptional()
+  @IsString()
+  @ApiProperty({
+    example: 'Estudar NestJS',
+    required: false,
+  })
   title: string;
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty({
+    example: 'TO_DO',
+    required: false,
+  })
   status: string;
 }
 
 export class TaskRouteParameters {
   @IsUUID()
+  @ApiProperty()
   id: string;
 }
